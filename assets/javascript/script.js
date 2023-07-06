@@ -44,7 +44,7 @@ function displayCurrentWeather(cityName, weatherData) {
   const temperature = weatherData.main.temp;
   const humidity = weatherData.main.humidity;
   const windSpeed = weatherData.wind.speed;
-  const iconUrl = `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
+  const iconUrl = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
 
   const html = `
     <h2>${cityName}</h2>
@@ -67,7 +67,7 @@ function displayForecast(forecastData) {
     const temperature = forecastItem.main.temp;
     const humidity = forecastItem.main.humidity;
     const windSpeed = forecastItem.wind.speed;
-    const iconUrl = `http://openweathermap.org/img/wn/${forecastItem.weather[0].icon}.png`;
+    const iconUrl = `https://openweathermap.org/img/wn/${forecastItem.weather[0].icon}.png`;
 
     html += `
       <div>
