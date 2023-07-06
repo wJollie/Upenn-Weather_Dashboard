@@ -1,4 +1,4 @@
-const apiLink = "${http://api.weatherapi.com/v1}&q=${city}&days=5";
+const apiURL = "http://api.weatherapi.com/v1/forecast.json";
 const apiKey = "4d6bdb899c0dba66341113292a0286a2";
 
 //Dom Elements
@@ -32,14 +32,17 @@ searchForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const city = cityInput.value.trim();
   if (city !== "") {
-    const url =
-      "${http://api.weatherapi.com/v1}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5";
-    fetch(apiLink)
+    // Make API request to get weather data
+    const url = `${API_URL}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
+
+    fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        const currentWeatherData = data.current; //Current weather data
-        const forecastData = data.forecast.forecastday; //Forecast data
+        // Handle the API response data
+        const currentWeatherData = data.current; // Current weather data
+        const forecastData = data.forecast.forecastday; // Forecast data
 
+        // Call functions to display current weather and forecast
         displayCurrentWeather(currentWeatherData);
         displayForecast(forecastData);
 
@@ -50,9 +53,6 @@ searchForm.addEventListener("submit", function (event) {
       .catch((error) => {
         console.log(error);
       });
-    // make api request to get weather data
-    // display current weather and forecast
-    // add searched city to search history
   }
 });
 
