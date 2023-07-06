@@ -16,13 +16,14 @@ searchForm.addEventListener("submit", function (event) {
     const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(
       city
     )}&days=5`;
+
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
         // Handle the API response data
-        const cityName = data.city.name;
-        const currentWeatherData = data.list[0].weather[0];
-        const forecastData = data.list.slice(1, 6);
+        const cityName = data.location.name;
+        const currentWeatherData = data.current;
+        const forecastData = data.forecast.forecastday;
 
         // Display current weather and forecast
         displayCurrentWeather(cityName, currentWeatherData);
@@ -39,19 +40,19 @@ searchForm.addEventListener("submit", function (event) {
 
 // Function to display current weather
 function displayCurrentWeather(cityName, weatherData) {
-  const date = new Date(weatherData.dt_txt).toLocaleDateString();
-  const temperature = weatherData.main.temp;
-  const humidity = weatherData.main.humidity;
-  const windSpeed = weatherData.wind.speed;
-  const iconUrl = `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`;
+  const date = weatherData.date;
+  const temperature = weatherData.temp_c;
+  const humidity = weatherData.humidity;
+  const windSpeed = weatherData.wind_kph;
+  const iconUrl = weatherData.condition.icon;
 
   const html = `
     <h2>${cityName}</h2>
     <p>Date: ${date}</p>
-    <p>Temperature: ${temperature}°F</p>
+    <p>Temperature: ${temperature}°C</p>
     <p>Humidity: ${humidity}%</p>
-    <p>Wind Speed: ${windSpeed} mph</p>
-    <img src="${iconUrl}" alt="${weatherData.weather[0].description}">
+    <p>Wind Speed: ${windSpeed} km/h</p>
+    <img src="${iconUrl}" alt="${weatherData.condition.text}">
   `;
 
   currentWeather.innerHTML = html;
@@ -62,19 +63,19 @@ function displayForecast(forecastData) {
   let html = "<h2>5-Day Forecast</h2>";
 
   forecastData.forEach((forecastItem) => {
-    const date = new Date(forecastItem.dt_txt).toLocaleDateString();
-    const temperature = forecastItem.main.temp;
-    const humidity = forecastItem.main.humidity;
-    const windSpeed = forecastItem.wind.speed;
-    const iconUrl = `https://openweathermap.org/img/wn/${forecastItem.weather[0].icon}.png`;
+    const date = forecastItem.date;
+    const temperature = forecastItem.day.avgtemp_c;
+    const humidity = forecastItem.day.avghumidity;
+    const windSpeed = forecastItem.day.maxwind_kph;
+    const iconUrl = forecastItem.day.condition.icon;
 
     html += `
       <div>
         <h3>${date}</h3>
-        <p>Temperature: ${temperature}°F</p>
+        <p>Temperature: ${temperature}°C</p>
         <p>Humidity: ${humidity}%</p>
-        <p>Wind Speed: ${windSpeed} mph</p>
-        <img src="${iconUrl}" alt="${forecastItem.weather[0].description}">
+        <p>Wind Speed: ${windSpeed} km/h</p>
+        <img src="${iconUrl}" alt="${forecastItem.day.condition.text}">
       </div>
     `;
   });
