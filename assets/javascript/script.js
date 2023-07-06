@@ -32,6 +32,8 @@ searchForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const city = cityInput.value.trim();
   if (city !== "") {
+    const url =
+      "${http://api.weatherapi.com/v1}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5";
     fetch(apiLink)
       .then((response) => response.json())
       .then((data) => {
