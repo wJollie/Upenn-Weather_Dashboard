@@ -13,10 +13,9 @@ searchForm.addEventListener("submit", function (event) {
   const city = cityInput.value.trim();
   if (city !== "") {
     // Make API request to get weather data
-    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
+    const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(
       city
-    )}&appid=${API_KEY}`;
-
+    )}&days=5`;
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
