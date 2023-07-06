@@ -33,7 +33,7 @@ searchForm.addEventListener("submit", function (event) {
   const city = cityInput.value.trim();
   if (city !== "") {
     // Make API request to get weather data
-    const url = `${API_URL}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
+    const url = `${apiURL}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
 
     fetch(url)
       .then((response) => response.json())
