@@ -1,7 +1,7 @@
-const apiURL = "http://api.weatherapi.com/v1/forecast.json";
+const API_URL = "http://api.weatherapi.com/v1/forecast.json";
 const apiKey = "4d6bdb899c0dba66341113292a0286a2";
 
-//Dom Elements
+// DOM elements
 
 const searchForm = document.getElementById("search-form");
 const cityInput = document.getElementById("city-input");
@@ -9,31 +9,31 @@ const currentWeather = document.getElementById("current-weather");
 const forecast = document.getElementById("forecast");
 const searchHistory = document.getElementById("search-history");
 
-// search history array
+// Search history array
 let searchHistoryArray = [];
 
-// display current weather
+// Function to display current weather
 function displayCurrentWeather(data) {
-  //placeholder
+  // Placeholder
 }
 
-// display forecast
+// Function to display forecast
 function displayForecast(data) {
-  // placeholder
+  // Placeholder
 }
 
-// display search history
+// Function to display search history
 function displaySearchHistory() {
-  // update the searchHistory element with the search history data
+  // Update the searchHistory element with the search history data
 }
 
-// Event Listener for submit
+// Event listener for form submission
 searchForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const city = cityInput.value.trim();
   if (city !== "") {
     // Make API request to get weather data
-    const url = `${apiURL}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
+    const url = `${API_URL}?key=${apiKey}&q=${encodeURIComponent(city)}&days=5`;
 
     fetch(url)
       .then((response) => response.json())
@@ -56,10 +56,10 @@ searchForm.addEventListener("submit", function (event) {
   }
 });
 
-// Event listener for history
+// Event listener for search history
 searchHistory.addEventListener("click", function (event) {
   if (event.target.tagName === "P") {
     const selectedCity = event.target.textContent;
-    // repeat steps to fetch and display weather for selected city
+    // Repeat steps to fetch and display weather for the selected city
   }
 });
