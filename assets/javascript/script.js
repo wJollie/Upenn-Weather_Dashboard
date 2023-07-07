@@ -18,7 +18,12 @@ searchForm.addEventListener("submit", function (event) {
     )}&days=5`;
 
     fetch(apiUrl)
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Weather data not found.");
+        }
+        return response.json();
+      })
       .then((data) => {
         // Handle the API response data
         const cityName = data.location.name;
