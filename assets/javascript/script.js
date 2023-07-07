@@ -13,21 +13,28 @@ searchForm.addEventListener("submit", function (event) {
   const city = cityInput.value.trim();
   if (city !== "") {
     // Make API request to get weather data
-    const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
       city
-    )}&days=5`;
+    )}&appid=${API_KEY}`;
 
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
         // Handle the API response data
-        const cityName = data.location.name;
-        const currentWeatherData = data.current;
-        const forecastData = data.forecast.forecastday;
+        const cityName = data.name;
+        const currentWeatherData = data.weather[0];
+        const temperature = data.main.temp;
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
 
-        // Display current weather and forecast
-        displayCurrentWeather(cityName, currentWeatherData);
-        displayForecast(forecastData);
+        // Display current weather
+        displayCurrentWeather(
+          cityName,
+          currentWeatherData,
+          temperature,
+          humidity,
+          windSpeed
+        );
 
         // Add searched city to search history
         addSearchHistory(cityName);
@@ -39,48 +46,25 @@ searchForm.addEventListener("submit", function (event) {
 });
 
 // Function to display current weather
-function displayCurrentWeather(cityName, weatherData) {
-  const date = weatherData.date;
-  const temperature = weatherData.temp_c;
-  const humidity = weatherData.humidity;
-  const windSpeed = weatherData.wind_kph;
-  const iconUrl = weatherData.condition.icon;
+function displayCurrentWeather(
+  cityName,
+  weatherData,
+  temperature,
+  humidity,
+  windSpeed
+) {
+  const iconCode = weatherData.icon;
+  const iconUrl = `https://openweathermap.org/img/w/${iconCode}.png`;
 
   const html = `
     <h2>${cityName}</h2>
-    <p>Date: ${date}</p>
-    <p>Temperature: ${temperature}°C</p>
+    <img src="${iconUrl}" alt="${weatherData.description}">
+    <p>Temperature: ${temperature} K</p>
     <p>Humidity: ${humidity}%</p>
-    <p>Wind Speed: ${windSpeed} km/h</p>
-    <img src="${iconUrl}" alt="${weatherData.condition.text}">
+    <p>Wind Speed: ${windSpeed} m/s</p>
   `;
 
   currentWeather.innerHTML = html;
-}
-
-// Function to display forecast
-function displayForecast(forecastData) {
-  let html = "<h2>5-Day Forecast</h2>";
-
-  forecastData.forEach((forecastItem) => {
-    const date = forecastItem.date;
-    const temperature = forecastItem.day.avgtemp_c;
-    const humidity = forecastItem.day.avghumidity;
-    const windSpeed = forecastItem.day.maxwind_kph;
-    const iconUrl = forecastItem.day.condition.icon;
-
-    html += `
-      <div>
-        <h3>${date}</h3>
-        <p>Temperature: ${temperature}°C</p>
-        <p>Humidity: ${humidity}%</p>
-        <p>Wind Speed: ${windSpeed} km/h</p>
-        <img src="${iconUrl}" alt="${forecastItem.day.condition.text}">
-      </div>
-    `;
-  });
-
-  forecast.innerHTML = html;
 }
 
 // Function to add searched city to search history
