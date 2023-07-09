@@ -37,6 +37,9 @@ searchForm.addEventListener("submit", function (event) {
 
         // Add searched city to search history
         addSearchHistory(cityName);
+
+        // Save search history to local storage
+        saveSearchHistory();
       })
       .catch((error) => {
         console.log(error);
@@ -125,6 +128,22 @@ function addSearchHistory(cityName) {
   searchHistory.appendChild(searchHistoryItem);
 }
 
+// Function to save search history to local storage
+function saveSearchHistory() {
+  const searchItems = Array.from(searchHistory.children).map(
+    (item) => item.textContent
+  );
+  localStorage.setItem("searchHistory", JSON.stringify(searchItems));
+}
+
+// Function to retrieve search history from local storage
+function getSearchHistory() {
+  const searchItems = JSON.parse(localStorage.getItem("searchHistory")) || [];
+  searchItems.forEach((item) => {
+    addSearchHistory(item);
+  });
+}
+
 // Event listener for search history
 searchHistory.addEventListener("click", function (event) {
   if (event.target.tagName === "P") {
@@ -135,3 +154,6 @@ searchHistory.addEventListener("click", function (event) {
     searchForm.dispatchEvent(new Event("submit"));
   }
 });
+
+// Load search history from local storage on page load
+getSearchHistory();
