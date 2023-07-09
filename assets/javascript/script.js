@@ -80,12 +80,12 @@ function displayCurrentWeather(weatherData, cityName) {
   const iconUrl = `http://openweathermap.org/img/w/${iconCode}.png`;
 
   const html = `
+    <img src="${iconUrl}" alt="${weatherData.weather[0].description}">
     <h2>${cityName}</h2>
     <p>Date: ${date}</p>
     <p>Temperature: ${temperature}°F</p>
     <p>Humidity: ${humidity}%</p>
     <p>Wind Speed: ${windSpeed} mph</p>
-    <img src="${iconUrl}" alt="${weatherData.weather[0].description}">
   `;
 
   currentWeather.innerHTML = html;
@@ -108,12 +108,12 @@ function displayForecast(forecastData) {
 
     html += `
       <div>
+        <img src="${iconUrl}" alt="${forecastData[date].description}">
         <h3>${date}</h3>
         <p>Temperature: ${Math.round(Math.max(...temperatures))}°F (Max)</p>
         <p>Temperature: ${Math.round(Math.min(...temperatures))}°F (Min)</p>
         <p>Average Humidity: ${Math.round(humidity)}%</p>
         <p>Average Wind Speed: ${Math.round(windSpeed)} mph</p>
-        <img src="${iconUrl}" alt="${forecastData[date].description}">
       </div>
     `;
   }
