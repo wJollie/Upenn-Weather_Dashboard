@@ -13,9 +13,9 @@ searchForm.addEventListener("submit", function (event) {
   const city = cityInput.value.trim();
   if (city !== "") {
     // Make API request to get weather data
-    const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(
+    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
       city
-    )}&days=5`;
+    )}&appid=${API_KEY}&units=imperial`;
 
     fetch(apiUrl)
       .then((response) => {
@@ -25,14 +25,15 @@ searchForm.addEventListener("submit", function (event) {
         return response.json();
       })
       .then((data) => {
-        // Handle the API response data
-        const cityName = data.location.name;
-        const currentWeatherData = data.current;
-        const forecastData = data.forecast.forecastday;
+        console.log(data);
+        const cityName = data.city.name;
+
+        // Process forecast data
+        const processedForecastData = processForecastData(data.list);
 
         // Display current weather and forecast
-        displayCurrentWeather(cityName, currentWeatherData);
-        displayForecast(forecastData);
+        displayCurrentWeather(data.list[0], cityName);
+        displayForecast(processedForecastData);
 
         // Add searched city to search history
         addSearchHistory(cityName);
@@ -43,21 +44,45 @@ searchForm.addEventListener("submit", function (event) {
   }
 });
 
+// Function to process forecast data and calculate daily averages
+function processForecastData(forecastData) {
+  const processedData = {};
+
+  forecastData.forEach((forecastItem) => {
+    const date = new Date(forecastItem.dt * 1000).toLocaleDateString();
+    if (!processedData[date]) {
+      processedData[date] = {
+        temperatures: [],
+        humidity: [],
+        windSpeed: [],
+        iconCode: forecastItem.weather[0].icon,
+      };
+    }
+
+    processedData[date].temperatures.push(forecastItem.main.temp);
+    processedData[date].humidity.push(forecastItem.main.humidity);
+    processedData[date].windSpeed.push(forecastItem.wind.speed);
+  });
+
+  return processedData;
+}
+
 // Function to display current weather
-function displayCurrentWeather(cityName, weatherData) {
-  const date = weatherData.date;
-  const temperature = weatherData.temp_c;
-  const humidity = weatherData.humidity;
-  const windSpeed = weatherData.wind_kph;
-  const iconUrl = weatherData.condition.icon;
+function displayCurrentWeather(weatherData, cityName) {
+  const date = new Date(weatherData.dt * 1000).toLocaleDateString();
+  const temperature = weatherData.main.temp;
+  const humidity = weatherData.main.humidity;
+  const windSpeed = weatherData.wind.speed;
+  const iconCode = weatherData.weather[0].icon;
+  const iconUrl = `http://openweathermap.org/img/w/${iconCode}.png`;
 
   const html = `
     <h2>${cityName}</h2>
     <p>Date: ${date}</p>
-    <p>Temperature: ${temperature}°C</p>
+    <p>Temperature: ${temperature}°F</p>
     <p>Humidity: ${humidity}%</p>
-    <p>Wind Speed: ${windSpeed} km/h</p>
-    <img src="${iconUrl}" alt="${weatherData.condition.text}">
+    <p>Wind Speed: ${windSpeed} mph</p>
+    <img src="${iconUrl}" alt="${weatherData.weather[0].description}">
   `;
 
   currentWeather.innerHTML = html;
@@ -67,23 +92,28 @@ function displayCurrentWeather(cityName, weatherData) {
 function displayForecast(forecastData) {
   let html = "<h2>5-Day Forecast</h2>";
 
-  forecastData.forEach((forecastItem) => {
-    const date = forecastItem.date;
-    const temperature = forecastItem.day.avgtemp_c;
-    const humidity = forecastItem.day.avghumidity;
-    const windSpeed = forecastItem.day.maxwind_kph;
-    const iconUrl = forecastItem.day.condition.icon;
+  for (const date in forecastData) {
+    const temperatures = forecastData[date].temperatures;
+    const humidity =
+      forecastData[date].humidity.reduce((acc, val) => acc + val) /
+      forecastData[date].humidity.length;
+    const windSpeed =
+      forecastData[date].windSpeed.reduce((acc, val) => acc + val) /
+      forecastData[date].windSpeed.length;
+    const iconCode = forecastData[date].iconCode;
+    const iconUrl = `http://openweathermap.org/img/w/${iconCode}.png`;
 
     html += `
       <div>
         <h3>${date}</h3>
-        <p>Temperature: ${temperature}°C</p>
-        <p>Humidity: ${humidity}%</p>
-        <p>Wind Speed: ${windSpeed} km/h</p>
-        <img src="${iconUrl}" alt="${forecastItem.day.condition.text}">
+        <p>Temperature: ${Math.round(Math.max(...temperatures))}°F (Max)</p>
+        <p>Temperature: ${Math.round(Math.min(...temperatures))}°F (Min)</p>
+        <p>Average Humidity: ${Math.round(humidity)}%</p>
+        <p>Average Wind Speed: ${Math.round(windSpeed)} mph</p>
+        <img src="${iconUrl}" alt="${forecastData[date].description}">
       </div>
     `;
-  });
+  }
 
   forecast.innerHTML = html;
 }
