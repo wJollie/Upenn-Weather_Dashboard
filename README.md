@@ -3,6 +3,7 @@ This is a project for the Upenn coding bootcamp. It is a weather app that uses o
 Deployed application: https://wjollie.github.io/Upenn-Weather_Dashboard/
 
 
+![Capture](https://github.com/wJollie/Upenn-Weather_Dashboard/assets/61369939/e8b9db99-351c-4417-ab28-266ec4b7d1f9)
 
 
 
